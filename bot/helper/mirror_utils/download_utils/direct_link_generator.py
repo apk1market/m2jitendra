@@ -9,7 +9,7 @@ than the modifications. See https://github.com/AvinashReddy3108/PaperplaneExtend
 for original authorship. """
 
 import requests
-import re
+import re, os
 
 from base64 import b64decode
 from urllib.parse import urlparse, unquote
@@ -26,6 +26,71 @@ from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 
 fmed_list = ['fembed.net', 'fembed.com', 'femax20.com', 'fcdn.stream', 'feurl.com', 'layarkacaxxi.icu',
              'naniplay.nanime.in', 'naniplay.nanime.biz', 'naniplay.com', 'mm9842.com']
+
+
+class AppDrive:
+    @staticmethod
+    def gen_data_string(data, boundary=f'{"-" * 6}_'):
+        data_string = ''
+        for item in data:
+            data_string += f'{boundary}\r\n'
+            data_string += f'Content-Disposition: form-data; name="{item}"\r\n\r\n{data[item]}\r\n'
+        data_string += f'{boundary}--\r\n'
+        return data_string
+
+    @staticmethod
+    def parse_info(data):
+        soup = BeautifulSoup(data, 'html.parser')
+        info = soup.find_all('li', {'class': 'list-group-item'})
+        info_parsed = {}
+        for item in info:
+            kv = [s.strip() for s in item.text.split(':', maxsplit=1)]
+            info_parsed[kv[0].lower()] = kv[1]
+        return info_parsed
+
+    def appdrive_dl(self, url):
+        client = requests.Session()
+        client.cookies.update({
+            'MD': os.environ.get("MD", ""),
+            'PHPSESSID': os.environ.get("PHPSESSID", "")
+        })
+        res = client.get(url)
+        key = re.findall(r'"key",\s+"(.*?)"', res.text)[0]
+        soup = BeautifulSoup(res.content, 'html.parser')
+        ddl_btn = soup.find('button', {'id': 'drc'})
+        info_parsed = self.parse_info(res.text)
+        info_parsed['error'] = False
+        info_parsed['link_type'] = 'login'  # direct/login
+        headers = {
+            "Content-Type": f"multipart/form-data; boundary={'-' * 4}_",
+        }
+        data = {
+            'type': 1,
+            'key': key,
+            'action': 'original'
+        }
+        if ddl_btn:
+            info_parsed['link_type'] = 'direct'
+            data['action'] = 'direct'
+        if data.get('type') <= 3:
+            try:
+                response = client.post(
+                    url,
+                    data=self.gen_data_string(data),
+                    headers=headers
+                )
+                response = response.json()
+            except Exception as e:
+                response = {
+                    'error': True,
+                    'error_message': str(e)
+                }
+        if 'url' in response:
+            info_parsed['gdrive_link'] = response['url']
+        elif 'error' in response and response['error']:
+            raise Exception(f"ERROR: {response['error_message']}")
+        info_parsed['src_url'] = url
+        return info_parsed
 
 
 def direct_link_generator(link: str):
@@ -74,6 +139,8 @@ def direct_link_generator(link: str):
         return fembed(link)
     elif any(x in link for x in ['sbembed.com', 'watchsb.com', 'streamsb.net', 'sbplay.org']):
         return sbembed(link)
+    elif "appdrive.in/file" in link:
+        return AppDrive().appdrive_dl(link)
     else:
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
 

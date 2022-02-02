@@ -140,7 +140,7 @@ def direct_link_generator(link: str):
     elif any(x in link for x in ['sbembed.com', 'watchsb.com', 'streamsb.net', 'sbplay.org']):
         return sbembed(link)
     elif "appdrive.in/file" in link:
-        return AppDrive().appdrive_dl(link)
+        return AppDrive().appdrive_dl(link)["gdrive_link"]
     else:
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
 

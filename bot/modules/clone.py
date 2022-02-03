@@ -7,8 +7,9 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.mirror_utils.status_utils.clone_status import CloneStatus
 from bot import dispatcher, LOGGER, CLONE_LIMIT, STOP_DUPLICATE, download_dict, download_dict_lock, Interval
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, is_gdrive_link, is_gdtot_link, new_thread
-from bot.helper.mirror_utils.download_utils.direct_link_generator import gdtot
+from bot.helper.mirror_utils.download_utils.direct_link_generator import gdtot, AppDrive
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
+
 
 @new_thread
 def cloneNode(update, context):
@@ -32,6 +33,14 @@ def cloneNode(update, context):
         try:
             msg = sendMessage(f"Processing: <code>{link}</code>", context.bot, update)
             link = gdtot(link)
+            deleteMessage(context.bot, msg)
+        except DirectDownloadLinkException as e:
+            deleteMessage(context.bot, msg)
+            return sendMessage(str(e), context.bot, update)
+    if "appdrive.in" in link:
+        try:
+            msg = sendMessage(f"Processing: <code>{link}</code>", context.bot, update)
+            link = AppDrive().appdrive_dl(link).get('gdrive_link')
             deleteMessage(context.bot, msg)
         except DirectDownloadLinkException as e:
             deleteMessage(context.bot, msg)
@@ -82,7 +91,7 @@ def cloneNode(update, context):
         else:
             sendMarkup(result + cc, context.bot, update, button)
     else:
-        sendMessage('Send Gdrive or gdtot link along with command or by replying to the link by command', context.bot, update)
+        sendMessage('Send GDrive or GDToT or AppDrive link along with command or by replying to the link by command', context.bot, update)
 
 clone_handler = CommandHandler(BotCommands.CloneCommand, cloneNode, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
 dispatcher.add_handler(clone_handler)

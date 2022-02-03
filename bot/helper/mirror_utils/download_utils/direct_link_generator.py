@@ -92,7 +92,7 @@ class AppDrive:
             info_parsed['error'] = True
             info_parsed['error_message'] = "Something Went Wrong!"
         if info_parsed['error']:
-            raise Exception(info_parsed['error_message'])
+            raise DirectDownloadLinkException(info_parsed['error_message'])
         if urlparse(url).netloc == 'driveapp.in' and not info_parsed['error']:
             res = client.get(info_parsed['gdrive_link'])
             drive_link = etree.HTML(res.content).xpath("//a[contains(@class,'btn')]/@href")[0]

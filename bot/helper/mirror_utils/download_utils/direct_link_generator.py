@@ -56,8 +56,7 @@ class AppDrive:
         })
         res = client.get(url)
         key = re.findall(r'"key",\s+"(.*?)"', res.text)[0]
-        soup = BeautifulSoup(res.content, 'html.parser')
-        ddl_btn = soup.find('button', {'id': 'drc'})
+        ddl_btn = etree.HTML(res.content).xpath("//button[@id='drc']")
         info_parsed = self.parse_info(res.text)
         info_parsed['error'] = False
         info_parsed['link_type'] = 'login'  # direct/login
@@ -72,7 +71,7 @@ class AppDrive:
         if ddl_btn:
             info_parsed['link_type'] = 'direct'
             data['action'] = 'direct'
-        if data.get('type') <= 3:
+        while data['type'] <= 3:
             try:
                 response = client.post(
                     url,
@@ -80,15 +79,23 @@ class AppDrive:
                     headers=headers
                 )
                 response = response.json()
-            except Exception as e:
-                response = {
-                    'error': True,
-                    'error_message': str(e)
-                }
+                break
+            except:
+                data['type'] += 1
         if 'url' in response:
             info_parsed['gdrive_link'] = response['url']
         elif 'error' in response and response['error']:
-            raise Exception(f"ERROR: {response['error_message']}")
+            info_parsed['error'] = True
+            info_parsed['error_message'] = response['message']
+        else:
+            info_parsed['error'] = True
+            info_parsed['error_message'] = "Something Went Wrong!"
+        if info_parsed['error']:
+            raise Exception(info_parsed['error_message'])
+        if urlparse(url).netloc == 'driveapp.in' and not info_parsed['error']:
+            res = client.get(info_parsed['gdrive_link'])
+            drive_link = etree.HTML(res.content).xpath("//a[contains(@class,'btn')]/@href")[0]
+            info_parsed['gdrive_link'] = drive_link
         info_parsed['src_url'] = url
         return info_parsed
 

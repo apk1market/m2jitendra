@@ -194,7 +194,7 @@ def direct_link_generator(link: str):
     elif "appdrive.in/file" in link:
         return AppDrive().appdrive_dl(link)["gdrive_link"]
     elif "hubdrive.in/file" in link:
-        return HubDrive().hubdrive_dl(link)["gdrive_link"]
+        return HubDrive().hubdrive_dl(link)
     else:
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
 

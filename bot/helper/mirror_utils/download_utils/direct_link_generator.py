@@ -142,9 +142,7 @@ class HubDrive:
         except:
             raise DirectDownloadLinkException("Failed to process!")
         gd_id = re.findall('gd=(.*)', res, re.DOTALL)[0]
-        info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
-        info_parsed['src_url'] = url
-        return info_parsed
+        return f"https://drive.google.com/open?id={gd_id}"
 
 
 def direct_link_generator(link: str):

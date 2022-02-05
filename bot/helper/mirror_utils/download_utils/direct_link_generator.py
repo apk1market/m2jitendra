@@ -33,6 +33,15 @@ fmed_list = ['fembed.net', 'fembed.com', 'femax20.com', 'fcdn.stream', 'feurl.co
 
 
 class AppDrive:
+    client = requests.Session()
+    
+    def account_login(self, url, email, password):
+        data = {
+            'email': email,
+            'password': password
+        }
+        self.client.post(f'https://{urlparse(url).netloc}/login', data=data)
+    
     @staticmethod
     def gen_data_string(data, boundary=f'{"-" * 6}_'):
         data_string = ''
@@ -53,12 +62,11 @@ class AppDrive:
         return info_parsed
 
     def appdrive_dl(self, url):
-        client = requests.Session()
-        client.cookies.update({
-            'MD': os.environ.get("MD", ""),
-            'PHPSESSID': os.environ.get("PHPSESSID", "")
+        self.client.headers.update({
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36"
         })
-        res = client.get(url)
+        self.account_login(url, email=os.environ.get('AD_EMAIL'), password=os.environ.get('AD_PASS'))
+        res = self.client.get(url)
         key = re.findall(r'"key",\s+"(.*?)"', res.text)[0]
         ddl_btn = etree.HTML(res.content).xpath("//button[@id='drc']")
         info_parsed = self.parse_info(res.text)
@@ -77,7 +85,7 @@ class AppDrive:
             data['action'] = 'direct'
         while data['type'] <= 3:
             try:
-                response = client.post(
+                response = self.client.post(
                     url,
                     data=self.gen_data_string(data),
                     headers=headers
@@ -97,7 +105,7 @@ class AppDrive:
         if info_parsed['error']:
             raise DirectDownloadLinkException(info_parsed['error_message'])
         if urlparse(url).netloc == 'driveapp.in' and not info_parsed['error']:
-            res = client.get(info_parsed['gdrive_link'])
+            res = self.client.get(info_parsed['gdrive_link'])
             drive_link = etree.HTML(res.content).xpath("//a[contains(@class,'btn')]/@href")[0]
             info_parsed['gdrive_link'] = drive_link
         info_parsed['src_url'] = url

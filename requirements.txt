@@ -11,6 +11,7 @@ google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
 gunicorn
+html_telegraph_poster
 lk21
 lxml
 pillow

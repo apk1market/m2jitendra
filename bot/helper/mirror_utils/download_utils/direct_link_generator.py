@@ -25,6 +25,9 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.ext_utils.bot_utils import is_gdtot_link
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 
+hubdrive_cookies = {
+    'crypt': os.environ.get("HD_CRYPT")
+}
 fmed_list = ['fembed.net', 'fembed.com', 'femax20.com', 'fcdn.stream', 'feurl.com', 'layarkacaxxi.icu',
              'naniplay.nanime.in', 'naniplay.nanime.biz', 'naniplay.com', 'mm9842.com']
 
@@ -101,6 +104,41 @@ class AppDrive:
         return info_parsed
 
 
+class HubDrive:
+    client = requests.Session()
+
+    @staticmethod
+    def parse_info(res):
+        info_parsed = {}
+        title = re.findall('>(.*?)<\/h4>', res.text)[0]
+        info_chunks = re.findall('>(.*?)<\/td>', res.text)
+        info_parsed['title'] = title
+        for i in range(0, len(info_chunks), 2):
+            info_parsed[info_chunks[i]] = info_chunks[i + 1]
+        return info_parsed
+
+    def hubdrive_dl(self, url):
+        self.client.cookies.update(hubdrive_cookies)
+        res = self.client.get(url)
+        info_parsed = self.parse_info(res)
+        info_parsed['error'] = False
+        up = urlparse(url)
+        req_url = f"{up.scheme}://{up.netloc}/ajax.php?ajax=download"
+        file_id = url.split('/')[-1]
+        data = {'id': file_id}
+        headers = {
+            'x-requested-with': 'XMLHttpRequest'
+        }
+        try:
+            res = self.client.post(req_url, headers=headers, data=data).json()['file']
+        except:
+            raise DirectDownloadLinkException("Failed to process!")
+        gd_id = re.findall('gd=(.*)', res, re.DOTALL)[0]
+        info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
+        info_parsed['src_url'] = url
+        return info_parsed
+
+
 def direct_link_generator(link: str):
     """ direct links generator """
     if 'youtube.com' in link or 'youtu.be' in link:
@@ -149,6 +187,8 @@ def direct_link_generator(link: str):
         return sbembed(link)
     elif "appdrive.in/file" in link:
         return AppDrive().appdrive_dl(link)["gdrive_link"]
+    elif "hubdrive.in/file" in link:
+        return HubDrive().hubdrive_dl(link)["gdrive_link"]
     else:
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
 

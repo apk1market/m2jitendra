@@ -52,7 +52,7 @@ def cloneNode(update, context):
     if "hubdrive.in" in link:
         try:
             msg = sendMessage(f"Processing: <code>{link}</code>", context.bot, update)
-            link = HubDrive().hubdrive_dl(link).get('gdrive_link')
+            link = HubDrive().hubdrive_dl(link)
             deleteMessage(context.bot, msg)
         except DirectDownloadLinkException as e:
             deleteMessage(context.bot, msg)

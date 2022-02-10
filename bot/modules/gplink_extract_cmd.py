@@ -17,7 +17,6 @@ def gplinks_bypass(url):
         return {}
 
 
-@new_thread
 def gp_link_extract_cmd_handler(update, context):
     args = update.message.text.split(" ", maxsplit=1)
     link = ''

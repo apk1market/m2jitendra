@@ -27,10 +27,10 @@ def gp_link_extract_cmd_handler(update, context):
         return sendMessage(f"/{BotCommands.GpLinkCommand} [gplink]", context.bot, update)
     msg = sendMessage("Extracting ...", context.bot, update)
     gp_data = gplinks_bypass(link)
+    deleteMessage(context.bot, msg)
     if not gp_data:
-        deleteMessage(context.bot, msg)
         return sendMessage("Failed to extract main link from GPLink!", context.bot, update)
-    sendMessage(f"Here is main link:\n\n{gp_data['url']}")
+    sendMessage(f"Here is main link:\n\n{gp_data['url']}", context.bot, update)
 
 
 gp_cmd_handler = CommandHandler(BotCommands.GpLinkCommand, gp_link_extract_cmd_handler, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)

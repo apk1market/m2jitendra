@@ -7,6 +7,7 @@ from bot import dispatcher
 from bot.helper.ext_utils.bot_utils import new_thread
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage
+from bot.helper.telegram_helper.filters import CustomFilters
 
 
 def gplinks_bypass(url):

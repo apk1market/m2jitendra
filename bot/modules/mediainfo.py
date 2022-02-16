@@ -45,6 +45,9 @@ def extract_mediainfo(link: str, bot, update):
     except KeyError:
         deleteMessage(bot, msg)
         sendMessage("Not a valid direct downloadable video!", bot, update)
+    except Exception as err:
+        deleteMessage(bot, msg)
+        sendMessage(f"Error: {err}", bot, update)
 
 
 def mediainfo_cmd_handler(update, context):

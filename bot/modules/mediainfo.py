@@ -7,6 +7,7 @@ from telegram.ext import CommandHandler
 from subprocess import run
 from bot import dispatcher
 from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.ext_utils.bot_utils import get_readable_file_size
 from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.ext_utils.telegraph_helper import telegraph
@@ -16,13 +17,13 @@ def extract_mediainfo(link: str, bot, update):
     __response = requests.head(link, stream=True)
     msg = sendMessage("Extracting ...", bot, update)
     try:
-        file_size = humanbytes(int(__response.headers["Content-Length"].strip()))
+        file_size = get_readable_file_size(int(__response.headers["Content-Length"].strip()))
         file_name = unquote_plus(link).rsplit('/', 1)[-1]
         mime_type = __response.headers.get("Content-Type", mimetypes.guess_type(file_name)).rsplit(";", 1)[0]
         result = run(f'mediainfo "{link}"', capture_output=True, shell=True)
         stderr = result.stderr.decode('utf-8')
         stdout = result.stdout.decode('utf-8')
-        metadata = stdout.decode().replace("\r", "").replace(link, file_name)
+        metadata = stdout.replace("\r", "").replace(link, file_name)
         html = "<h3>Metadata of {}</h3>" \
                "<br><br>" \
                "<pre>{}</pre>"
@@ -38,7 +39,7 @@ def extract_mediainfo(link: str, bot, update):
             f"**File Size:** `{file_size}`\n"
             f"**Mime Type:** `{mime_type}`\n\n"
             f"**Here all metadata of your video:**\n"
-            f"{page['url']}",
+            f"https://telegra.ph/{page['path'][0]}",
             bot, update
         )
     except KeyError:
@@ -56,5 +57,10 @@ def mediainfo_cmd_handler(update, context):
     extract_mediainfo(link, context.bot, update)
 
 
-mi_cmd_handler = CommandHandler(BotCommands.MediaInfoCommand, mediainfo_cmd_handler, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
+mi_cmd_handler = CommandHandler(
+    BotCommands.MediaInfoCommand,
+    mediainfo_cmd_handler,
+    filters=CustomFilters.authorized_chat | CustomFilters.authorized_user,
+    run_async=True
+)
 dispatcher.add_handler(mi_cmd_handler)

@@ -33,19 +33,19 @@ def extract_mediainfo(link: str, bot, update):
         )
         deleteMessage(bot, msg)
         sendMessage(
-            f"**File Name:** `{file_name}`\n"
-            f"**File Size:** `{file_size}`\n"
-            f"**Mime Type:** `{mime_type}`\n\n"
-            f"**Here all metadata of your video:**\n"
-            f"https://telegra.ph/{page['path'][0]}",
+            f"<b>File Name:</b> `{file_name}`\n"
+            f"<b>File Size:</b> `{file_size}`\n"
+            f"<b>Mime Type:</b> `{mime_type}`\n\n"
+            f"<b>Here all metadata of your video:</b>\n"
+            f"https://telegra.ph/{page['url']}",
             bot, update
         )
     except KeyError:
         deleteMessage(bot, msg)
-        sendMessage("Not a valid direct downloadable video!", bot, update)
+        sendMessage("<b>Not a valid direct downloadable video!</b>", bot, update)
     except Exception as err:
         deleteMessage(bot, msg)
-        sendMessage(f"Error: {err}", bot, update)
+        sendMessage(f"<b>Error:</b> <code>{err}</code>", bot, update)
 
 
 def mediainfo_cmd_handler(update, context):

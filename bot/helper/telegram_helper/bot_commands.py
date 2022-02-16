@@ -3,6 +3,7 @@ class _BotCommands:
         self.StartCommand = 'start'
         self.MirrorCommand = 'mirror'
         self.GpLinkCommand = 'gp'
+        self.MediaInfoCommand = 'mediainfo'
         self.UnzipMirrorCommand = 'unzipmirror'
         self.ZipMirrorCommand = 'zipmirror'
         self.CancelMirror = 'cancel'

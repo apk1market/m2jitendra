@@ -29,9 +29,7 @@ def extract_mediainfo(link: str, bot, update):
                "<pre>{}</pre>"
         page = telegraph.create_page(
             title="Metadata of Video",
-            author_name="@mayurv03",
-            author_url="https://t.me/mayurv03",
-            html_content=html.format(file_name, metadata)
+            content=html.format(file_name, metadata)
         )
         deleteMessage(bot, msg)
         sendMessage(

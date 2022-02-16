@@ -37,7 +37,7 @@ def extract_mediainfo(link: str, bot, update):
             f"<b>File Size:</b> `{file_size}`\n"
             f"<b>Mime Type:</b> `{mime_type}`\n\n"
             f"<b>Here all metadata of your video:</b>\n"
-            f"https://telegra.ph/{page['url']}",
+            f"{page['url']}",
             bot, update
         )
     except KeyError:

@@ -33,9 +33,9 @@ def extract_mediainfo(link: str, bot, update):
         )
         deleteMessage(bot, msg)
         sendMessage(
-            f"<b>File Name:</b> `{file_name}`\n"
-            f"<b>File Size:</b> `{file_size}`\n"
-            f"<b>Mime Type:</b> `{mime_type}`\n\n"
+            f"<b>File Name:</b> <code>{file_name}</code>`\n"
+            f"<b>File Size:</b> <code>{file_size}</code>`\n"
+            f"<b>Mime Type:</b> <code>{mime_type}</code>\n\n"
             f"<b>Here all metadata of your video:</b>\n"
             f"{page['url']}",
             bot, update

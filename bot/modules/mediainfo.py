@@ -15,7 +15,7 @@ from bot.helper.ext_utils.telegraph_helper import telegraph
 
 def extract_mediainfo(link: str, bot, update):
     __response = requests.head(link, stream=True)
-    msg = sendMessage("Extracting ...", bot, update)
+    msg = sendMessage("Getting Mediainfo ...", bot, update)
     try:
         file_size = get_readable_file_size(int(__response.headers["Content-Length"].strip()))
         file_name = unquote_plus(link).rsplit('/', 1)[-1]

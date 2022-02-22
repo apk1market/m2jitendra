@@ -105,7 +105,7 @@ def cloneNode(update, context):
         if is_gdtot:
             gd.deletefile(link)
     else:
-        sendMessage('Send GDrive or GDToT or AppDrive link along with command or by replying to the link by command', context.bot, update)
+        sendMessage('Send GDrive or AppDrive or GDToT or Hubdrive link along with command or by replying to the link by command', context.bot, update)
 
 clone_handler = CommandHandler(BotCommands.CloneCommand, cloneNode, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
 dispatcher.add_handler(clone_handler)

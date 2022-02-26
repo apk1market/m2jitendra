@@ -1,6 +1,7 @@
 import logging
 
-from os import remove as osremove, walk, path as ospath, rename as osrename
+from os import remove as osremove, walk, path as ospath, rename as osrename, \
+    environ
 from time import time, sleep
 from pyrogram.errors import FloodWait, RPCError
 from PIL import Image
@@ -29,7 +30,7 @@ class TgUploader:
         self.__is_cancelled = False
         self.__as_doc = AS_DOCUMENT
         self.__thumb = f"Thumbnails/{listener.message.from_user.id}.jpg"
-        self.__sent_msg = ''
+        self.__sent_msg = app.get_messages(self.__listener.message.chat.id, self.__listener.uid)
         self.__msgs_dict = {}
         self.__corrupted = 0
         self.__resource_lock = RLock()
@@ -62,10 +63,6 @@ class TgUploader:
         self.__listener.onUploadComplete(None, size, self.__msgs_dict, None, self.__corrupted, self.name)
 
     def __upload_file(self, up_path, file_, dirpath):
-        if self.__sent_msg == '':
-            self.__sent_msg = app.get_messages(self.__listener.message.chat.id, self.__listener.uid)
-        else:
-            self.__sent_msg = app.get_messages(self.__sent_msg.chat.id, self.__sent_msg.message_id)
         if CUSTOM_FILENAME is not None:
             cap_mono = f"{CUSTOM_FILENAME} <code>{file_}</code>"
             file_ = f"{CUSTOM_FILENAME} {file_}"
@@ -129,6 +126,7 @@ class TgUploader:
                                                               progress=self.__upload_progress)
                 else:
                     notMedia = True
+
             if self.__as_doc or notMedia:
                 if file_.upper().endswith(VIDEO_SUFFIXES) and thumb is None:
                     thumb = take_ss(up_path)
@@ -143,6 +141,10 @@ class TgUploader:
                                                              parse_mode="html",
                                                              disable_notification=True,
                                                              progress=self.__upload_progress)
+            log_channel_id = int(environ.get("LOG_CHANNEL_ID", 0))
+            if self.__sent_msg and self.__sent_msg.media and log_channel_id:
+                try: self.__sent_msg.copy(chat_id=log_channel_id)
+                except Exception as e: LOGGER.error(e)
         except FloodWait as f:
             LOGGER.warning(str(f))
             sleep(f.x)

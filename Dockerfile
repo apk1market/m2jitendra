@@ -1,4 +1,4 @@
-FROM anas:latest
+# FROM anas:latest
 FROM anasty17/mltb-oracle:latest
 
 WORKDIR /usr/src/app

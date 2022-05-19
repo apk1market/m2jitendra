@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "penelopecross-jk",
+  "private_key_id": "4d137c12734589712bd3468afbb2e3f4635ddbd1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCqEzAflFneHd0C\nhu141U+lcxKN08cGcNcRuy/dmApUGjV/y7iNEA3Gvnvad5Ma+Rg6vpRPR+lJWKY2\nAEBCoh45j5N4RevlMuaLT4m02MZRitUgS5LrZdNR46g02pJbFP/9WC63UoPi2WdK\nP+Y5x+bWWnW5uqMv64OZIwSyzKSWQqYl4nI5EaI3WE7CZkysL2j/1Fjb8gZ0A1CB\nzriTylsY49WFfNPwyLyQ8+tNghOPPAoiQ+rdRa37cyvohPncjQpH5Hpluf6Z9+he\nxRagup3ue2yHJJEUc7P6hXzJfKyxiCh05skFlavKDg6V8RD43nHJCTuzxNkfotfZ\nqcxcrIBnAgMBAAECggEAM7DCQw7VI3eDGQYGPd/jJZ9sR7PSfSgljauNODXCCd6v\nXOh/bkwvS7TQMs195chIb25F6DSseBDb73SzEy1vr0HuabMip5YJUNT7Pv5VhCoE\nbZzaifX4PJ7LHElECy++P/Mhu7D2CafWx0/VesFBbOuwdSL+/wz/AbeNcYRWD56y\nR0m31tqW1l56hzyJDhwNLPpEDAoTGbejFQkGAZM6x7brfjQzj+YRhrkZBJwDcLSk\n9LcrzCdwzY8jpKYlJf04CcveypACHh2RVvSLPL6v1knRDXnWSe/8U4LWD5Oel7PI\nO8KqCMON49uqW34Z24eqbaCJIUfjX6uRzd4PPBv1sQKBgQDRKUvTn+ql0nhU9FxH\npKqaQK5qbe1Q31tddLQoJTa8BLZqrZWjjnMzpabXl6DnofYCGGPAEm2MW7I52HwS\n226gsYaFLCDJEOSaPp48NSbKyWOacaor6dN/mROrOoGUrLqVlVcuBigwiTtCdfjL\n2hEFARP4k02Uc0f+DtRHkynuNwKBgQDQKSq3PeN1A5xKQ60UlDFslheOQGQSdgaa\ncdiCRhaxF5ZPMJ01Eu4z5Z5ltLjzDwd7tjR/cl80M7/gT09KfiyRqS8fa5IyImiE\nWXZFn+TdR4DYidhMMn6Nv+n0iZFSstUKsga8m46h1lCqEGZSBBhMBeaJWR5xikcN\nT9auNvBnUQKBgGnveYk4wJa1795PWYGrxACWbABZps3EIrlFx41hs8QsuttzCYwq\nNOzepI8jLArFfBz5j2QTsUpakv07STQf0XswDsraW8yacr4wouIppXkl4P2zPhY5\nurYwqMabvk+34FSsq9gSpD5Y8xupNpbA3sfjEONgb/WVIcxqZFfQEHenAoGBAK7p\neKBDG8bugryQg3ZgU+t3b1Gz36L3k/LhKNnGxTiHpmDia6b2QjxPfLrfke2DOnmE\nkDZrR35Y4ak9W1YwEYlQDW2seUsxSHu1pME6axhZBfZuVdcpMtgvZAp8MiW4aXW0\nRB7l44Mvz9YnM6NFF5mB98Z/oSos1ClmZfE77uQRAoGBAIYfo8s8D4O8Qq0auHLe\ngnN2+rDiLl6bsWlpICZITZul9sLJsQSSVUxKb70bmCLXCLOSMRKsz/0BFtwLjAim\nmC8FY7yp5Yac4arM0TjhkCBlKN+MLcSlclO/Oq30klpcmeBSLU8RVasaj5xyzZ8H\nddHmFtNzHTMYD3/cpUniAC77\n-----END PRIVATE KEY-----\n",
+  "client_email": "mfc-p3tbrbzhzw8heaplfqj-7lpudi@penelopecross-jk.iam.gserviceaccount.com",
+  "client_id": "103998773236612447555",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mfc-p3tbrbzhzw8heaplfqj-7lpudi%40penelopecross-jk.iam.gserviceaccount.com"
+}

@@ -1,7 +1,7 @@
-from os import remove as osremove, path as ospath, mkdir, walk, listdir, rmdir
+from os import remove as osremove, path as ospath, mkdir, walk, listdir, rmdir, makedirs
 from sys import exit as sysexit
 from json import loads as jsnloads
-from shutil import rmtree
+from shutil import rmtree, disk_usage
 from PIL import Image
 from magic import Magic
 from subprocess import run as srun, check_output
@@ -9,30 +9,31 @@ from time import time
 from math import ceil
 
 from .exceptions import NotSupportedExtractionArchive
-from bot import aria2, LOGGER, DOWNLOAD_DIR, get_client, TG_SPLIT_SIZE, EQUAL_SPLITS
+from bot import aria2, LOGGER, DOWNLOAD_DIR, get_client, TG_SPLIT_SIZE, EQUAL_SPLITS, STORAGE_THRESHOLD
 
-VIDEO_SUFFIXES = ("M4V", "MOV", "FLV", "WMV", "3GP", "MPG", "AVI")
+VIDEO_SUFFIXES = ("M4V", "MOV", "FLV", "WMV", "3GP", "MPG", "WEBM", "AVI")
 
 def clean_download(path: str):
     if ospath.exists(path):
         LOGGER.info(f"Cleaning Download: {path}")
         try:
             rmtree(path)
-        except FileNotFoundError:
+        except:
             pass
 
 def start_cleanup():
     try:
         rmtree(DOWNLOAD_DIR)
-    except FileNotFoundError:
+    except:
         pass
+    makedirs(DOWNLOAD_DIR)
 
 def clean_all():
     aria2.remove_all(True)
-    get_client().torrents_delete(torrent_hashes="all", delete_files=True)
+    get_client().torrents_delete(torrent_hashes="all")
     try:
         rmtree(DOWNLOAD_DIR)
-    except FileNotFoundError:
+    except:
         pass
 
 def exit_clean_up(signal, frame):
@@ -67,15 +68,27 @@ def get_path_size(path: str):
             total_size += ospath.getsize(abs_path)
     return total_size
 
+def check_storage_threshold(size: int, arch=False, alloc=False):
+    if not alloc:
+        if not arch:
+            if disk_usage(DOWNLOAD_DIR).free - size < STORAGE_THRESHOLD * 1024**3:
+                return False
+        elif disk_usage(DOWNLOAD_DIR).free - (size * 2) < STORAGE_THRESHOLD * 1024**3:
+            return False
+    elif not arch:
+        if disk_usage(DOWNLOAD_DIR).free < STORAGE_THRESHOLD * 1024**3:
+            return False
+    elif disk_usage(DOWNLOAD_DIR).free - size < STORAGE_THRESHOLD * 1024**3:
+        return False
+    return True
+
 def get_base_name(orig_path: str):
-    if orig_path.endswith(".mkv"):
+    if orig_path.endswith(".tar.bz2"):
+        return orig_path.rsplit(".tar.bz2", 1)[0]
+    elif orig_path.endswith(".mkv"):
         return orig_path.rsplit(".mkv", 1)[0]
     elif orig_path.endswith(".mp4"):
         return orig_path.rsplit(".mp4", 1)[0]
-    elif orig_path.endswith(".webm"):
-        return orig_path.rsplit(".webm", 1)[0]
-    elif orig_path.endswith(".tar.bz2"):
-        return orig_path.rsplit(".tar.bz2", 1)[0]
     elif orig_path.endswith(".tar.gz"):
         return orig_path.rsplit(".tar.gz", 1)[0]
     elif orig_path.endswith(".bz2"):
@@ -180,7 +193,7 @@ def take_ss(video_file):
 def split(path, size, file_, dirpath, split_size, start_time=0, i=1, inLoop=False):
     parts = ceil(size/TG_SPLIT_SIZE)
     if EQUAL_SPLITS and not inLoop:
-        split_size = ceil(size/parts)
+        split_size = ceil(size/parts) + 1000
     if file_.upper().endswith(VIDEO_SUFFIXES):
         base_name, extension = ospath.splitext(file_)
         split_size = split_size - 2500000
@@ -240,4 +253,3 @@ def get_video_resolution(path):
     except Exception as e:
         LOGGER.error(f"get_video_resolution: {e}")
         return 480, 320
-
